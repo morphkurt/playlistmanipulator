@@ -8,14 +8,15 @@ console.log(config.config.asset[0].name);
 
 //default left bitrate
 cache.put('left','1200');
+cache.put('newleft','1200');
 cache.put('starttime',Math.floor(new Date() / 1000));
 
 //defalut right rate
 cache.put('right','1200');
-cache.put('changedseq','1000000000000000');
+cache.put('newright','1200');
 //default stream
 cache.put('asset','aflclip');
-cache.put('prevasset','afl-gf');
+cache.put('newasset','afl-gf');
 
 app.get('/out/u/playlist.m3u8', function (req, res) {
   var assetArray = config.config.asset.filter(function(item) { return item.name == cache.get('asset'); });
@@ -23,12 +24,22 @@ app.get('/out/u/playlist.m3u8', function (req, res) {
   var currenttime=Math.floor(new Date() / 1000);
   var seq=Math.floor((currenttime-starttime)/config.config.segment);
   var segno=seq%assetArray[0].segments;
+  var nextseg=-1;
   var res_body='#EXTM3U\r\n#EXT-X-TARGETDURATION:'+config.config.segment+'\r\n'+'#EXT-X-MEDIA-SEQUENCE:'+seq+'\r\n';
   res.set('Content-Type', 'application/vnd.apple.mpegurl');
   for (i = 0; i < config.config.index; i++) { 
-    res_body += '#EXTINF:'+config.config.segment+',\r\n';
-       //aflclip_h264_1200.mp4.yuv_aflclip_hevc_1200out_000
-        res_body += 'http://localhost:9999/' + cache.get('asset')+ '_h264_' + cache.get('left')+ '.mp4.yuv_aflclip_hevc_'+cache.get('right')+'out_'+ zeroPad(segno+i,5) +'.ts\r\n';
+	if(cache.get('lastchanged')){
+		console.log(Number(cache.get('lastchanged')+Number(config.config.segment)));
+		if (Number(cache.get('lastchanged')+Number(config.config.segment)*Number(config.config.index)) > Number(currenttime) ) {
+			nextseg=Math.floor((Number(cache.get('lastchanged')+Number(config.config.segment)*Number(config.config.index))-starttime)/config.config.segment);
+		}
+	}
+	if ((segno+i)===nextseg){
+			res_body += '#EXT-X-DISCONTINUITY\r\n';
+	}
+	
+    	res_body += '#EXTINF:'+config.config.segment+',\r\n';
+        res_body += config.config.preamble + cache.get('asset')+ '_h264_' + cache.get('left')+ '_'+cache.get('right')+'-'+ zeroPad(segno+i,config.config.segment_digits) +'.ts\r\n';
   } 
     
   console.log(req.url);  
@@ -41,23 +52,27 @@ app.get('/set', function (req, res) {
   var changed=false;
   if (req.query.left){
       if (req.query.left.trim() !==  cache.get('left')){
-          cache.put('left',req.query.left);
+          cache.put('newleft',req.query.left);
+	  changed=true;
       } 
   	  
   }
   if (req.query.right){
   	if (req.query.right.trim() !==  cache.get('right')){
-          cache.put('right',req.query.right);
+          cache.put('newright',req.query.right);
+	  changed=true;
       } 
   }
   if (req.query.asset){
   	if (req.query.asset.trim() !==  cache.get('asset')){
-          cache.put('asset',req.query.asset);
+          cache.put('newasset',req.query.asset);
+	  changed=true;
     } 
   }
 
   if(changed){
-    cache.put('changedseq',Math.floor((currenttime-starttime)/config.config.segment));
+    console.log(currenttime);
+    cache.put('lastchanged',currenttime);
   }
 
   res.send('OK');

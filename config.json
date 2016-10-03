@@ -29,6 +29,8 @@
       }
     ],
     "segment": "2",
-    "index": "2"
+    "index": "2",
+    "preamble":"http://192.168.1.100:8080/",
+    "segment_digits":"5"
   }
 }
