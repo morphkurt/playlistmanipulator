@@ -1,0 +1,17 @@
+{
+  "name": "demo-playlist-creator",
+  "version": "1.0.0",
+  "description": "Creates Manifest for Video Demos",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "memory-cache": "^0.1.6",
+    "util": "^0.10.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+  	"start": "node app.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
