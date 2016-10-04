@@ -4,45 +4,59 @@ var cache = require('memory-cache');
 var config = require("./config.json");
 var util = require('util');
 
-console.log(config.config.asset[0].name);
 
 //default left bitrate
 cache.put('left','1200');
-cache.put('newleft','1200');
+cache.put('prevleft','1200');
 cache.put('starttime',Math.floor(new Date() / 1000));
 
 //defalut right rate
 cache.put('right','1200');
-cache.put('newright','1200');
+cache.put('prevright','1200');
 //default stream
 cache.put('asset','aflclip');
-cache.put('newasset','afl-gf');
+cache.put('prevasset','afl-gf');
+cache.put('lastchanged','0');
 
 app.get('/out/u/playlist.m3u8', function (req, res) {
   var assetArray = config.config.asset.filter(function(item) { return item.name == cache.get('asset'); });
   var starttime=cache.get('starttime');
   var currenttime=Math.floor(new Date() / 1000);
   var seq=Math.floor((currenttime-starttime)/config.config.segment);
-  var segno=seq%assetArray[0].segments;
   var nextseg=-1;
   var res_body='#EXTM3U\r\n#EXT-X-TARGETDURATION:'+config.config.segment+'\r\n'+'#EXT-X-MEDIA-SEQUENCE:'+seq+'\r\n';
   res.set('Content-Type', 'application/vnd.apple.mpegurl');
-  for (i = 0; i < config.config.index; i++) { 
-	if(cache.get('lastchanged')){
-		console.log(Number(cache.get('lastchanged')+Number(config.config.segment)));
-		if (Number(cache.get('lastchanged')+Number(config.config.segment)*Number(config.config.index)) > Number(currenttime) ) {
-			nextseg=Math.floor((Number(cache.get('lastchanged')+Number(config.config.segment)*Number(config.config.index))-starttime)/config.config.segment);
-		}
-	}
-	if ((segno+i)===nextseg){
+  var changed=false;
+  for (i = config.config.index; i > 0; i--) { 
+  	var seg=((Math.floor(((currenttime-(i*config.config.segment))-starttime)/config.config.segment)%assetArray[0].segments)+1);
+	if ((seq > 10) && seg ==1){
 			res_body += '#EXT-X-DISCONTINUITY\r\n';
 	}
+	if(seg>0){
+		if(Number(cache.get('lastchanged'))>=Number(currenttime-(config.config.index*config.config.segment))){		
+  			var disseg=(Math.floor((Number(cache.get('lastchanged'))-starttime)/config.config.segment)%assetArray[0].segments)+1;
+			if(Number(cache.get('lastchanged'))>=Number(currenttime-(i*config.config.segment))){
+				res_body += '#EXTINF:'+config.config.segment+',\r\n';
+				res_body += config.config.preamble + cache.get('prevasset') +'_'+cache.get('prevleft')+ '_'+cache.get('prevright')+'-'+ zeroPad(seg,config.config.segment_digits) +'.ts\r\n';
+				changed=true;		
+			}else{
+				if(changed || (i === (config.config.index-1))){
+					res_body += '#EXT-X-DISCONTINUITY\r\n';
+				}
+				changed=false;
+				res_body += '#EXTINF:'+config.config.segment+',\r\n';
+				res_body += config.config.preamble + cache.get('asset')+ '_'+cache.get('left')+ '_'+cache.get('right')+'-'+ zeroPad(seg,config.config.segment_digits) +'.ts\r\n';		
+			}
+			
+		
+		}else{
+			res_body += '#EXTINF:'+config.config.segment+',\r\n';
+			res_body += config.config.preamble + cache.get('asset')+'_'+ cache.get('left')+ '_'+cache.get('right')+'-'+ zeroPad(seg,config.config.segment_digits) +'.ts\r\n';		
+		}
+	}
 	
-    	res_body += '#EXTINF:'+config.config.segment+',\r\n';
-        res_body += config.config.preamble + cache.get('asset')+ '_h264_' + cache.get('left')+ '_'+cache.get('right')+'-'+ zeroPad(segno+i,config.config.segment_digits) +'.ts\r\n';
   } 
     
-  console.log(req.url);  
   res.send(res_body);
 });
 
@@ -50,28 +64,30 @@ app.get('/set', function (req, res) {
   var starttime=cache.get('starttime');
   var currenttime=Math.floor(new Date() / 1000);
   var changed=false;
+  cache.put('prevright',cache.get('right'));
+  cache.put('prevleft',cache.get('left'));
+  cache.put('prevasset',cache.get('asset'));
   if (req.query.left){
       if (req.query.left.trim() !==  cache.get('left')){
-          cache.put('newleft',req.query.left);
+          cache.put('left',req.query.left);
 	  changed=true;
       } 
   	  
   }
   if (req.query.right){
   	if (req.query.right.trim() !==  cache.get('right')){
-          cache.put('newright',req.query.right);
+          cache.put('right',req.query.right);
 	  changed=true;
       } 
   }
   if (req.query.asset){
   	if (req.query.asset.trim() !==  cache.get('asset')){
-          cache.put('newasset',req.query.asset);
+          cache.put('asset',req.query.asset);
 	  changed=true;
     } 
   }
 
   if(changed){
-    console.log(currenttime);
     cache.put('lastchanged',currenttime);
   }
 
