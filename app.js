@@ -102,7 +102,11 @@ app.get('/out/getconfig', function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.set('Content-Type', 'application/json');
-  res.send(JSON.stringify(cache));
+  var hash = {};
+  hash['left']=cache.get('left');
+  hash['right']=cache.get('right');
+  hash['asset']=cache.get('asset');
+  res.send(JSON.stringify(hash));
  
 });
 
