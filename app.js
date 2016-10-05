@@ -19,6 +19,8 @@ cache.put('prevasset','afl-gf');
 cache.put('lastchanged','0');
 
 app.get('/out/u/playlist.m3u8', function (req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   var assetArray = config.config.asset.filter(function(item) { return item.name == cache.get('asset'); });
   var starttime=cache.get('starttime');
   var currenttime=Math.floor(new Date() / 1000);
@@ -61,6 +63,8 @@ app.get('/out/u/playlist.m3u8', function (req, res) {
 });
 
 app.get('/set', function (req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   var starttime=cache.get('starttime');
   var currenttime=Math.floor(new Date() / 1000);
   var changed=false;
@@ -92,6 +96,14 @@ app.get('/set', function (req, res) {
   }
 
   res.send('OK');
+});
+
+app.get('/out/getconfig', function (req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify(cache));
+ 
 });
 
 function zeroPad(num, places) {
