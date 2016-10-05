@@ -4,7 +4,7 @@
   "description": "Creates Manifest for Video Demos",
   "main": "app.js",
   "dependencies": {
-    "redis":"*"
+    "redis":"*",
     "express": "^4.14.0",
     "memory-cache": "^0.1.6",
     "util": "^0.10.3"
