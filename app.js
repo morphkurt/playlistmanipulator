@@ -43,7 +43,9 @@ app.get('/out/u/playlist.m3u8', function (req, res) {
 				changed=true;		
 			}else{
 				if(changed || (i === (config.config.index-1))){
+					if(seg !=1){
 					res_body += '#EXT-X-DISCONTINUITY\r\n';
+					}
 				}
 				changed=false;
 				res_body += '#EXTINF:'+config.config.segment+',\r\n';
