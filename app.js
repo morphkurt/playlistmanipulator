@@ -73,6 +73,7 @@ app.get('/set', function (req, res) {
   cache.put('prevright',cache.get('right'));
   cache.put('prevleft',cache.get('left'));
   cache.put('prevasset',cache.get('asset'));
+  
   if (req.query.left){
       if (req.query.left.trim() !==  cache.get('left')){
           cache.put('left',req.query.left);
@@ -91,6 +92,14 @@ app.get('/set', function (req, res) {
           cache.put('asset',req.query.asset);
 	  changed=true;
     } 
+  }
+
+  if (req.query.index){
+	config.config.index=req.query.index;
+  }
+ 
+  if (req.query.preamble){
+        config.config.preamble=req.query.preamble;
   }
 
   if(changed){
