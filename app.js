@@ -14,8 +14,8 @@ cache.put('starttime',Math.floor(new Date() / 1000));
 cache.put('right','1200');
 cache.put('prevright','1200');
 //default stream
-cache.put('asset','aflclip');
-cache.put('prevasset','afl-gf');
+cache.put('asset','afl-gf-overlay');
+cache.put('prevasset','afl-gf-overlay');
 cache.put('lastchanged','0');
 
 app.get('/out/u/playlist.m3u8', function (req, res) {
