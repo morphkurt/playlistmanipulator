@@ -23,10 +23,6 @@
     ],
     "asset": [
       {
-        "name": "aflclip",
-        "segments": "119"
-      },
-      {
         "name": "afl-gf-nooverlay",
         "segments": "119"
       },
