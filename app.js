@@ -22,6 +22,7 @@ app.get('/out/u/playlist.m3u8', function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   var assetArray = config.config.asset.filter(function(item) { return item.name == cache.get('asset'); });
+  var prevassetArray = config.config.asset.filter(function(item) { return item.name == cache.get('prevasset'); });
   var starttime=cache.get('starttime');
   var currenttime=Math.floor(new Date() / 1000);
   var seq=Math.floor((currenttime-starttime)/config.config.segment);
@@ -31,15 +32,16 @@ app.get('/out/u/playlist.m3u8', function (req, res) {
   var changed=false;
   for (i = config.config.index; i > 0; i--) { 
   	var seg=((Math.floor(((currenttime-(i*config.config.segment))-starttime)/config.config.segment)%assetArray[0].segments)+1);
+	var prevseg=((Math.floor(((currenttime-(i*config.config.segment))-starttime)/config.config.segment)%prevassetArray[0].segments)+1);
+
 	if ((seq > 10) && seg ==1){
 			res_body += '#EXT-X-DISCONTINUITY\r\n';
 	}
 	if(seg>0){
 		if(Number(cache.get('lastchanged'))>=Number(currenttime-(config.config.index*config.config.segment))){		
-  			var disseg=(Math.floor((Number(cache.get('lastchanged'))-starttime)/config.config.segment)%assetArray[0].segments)+1;
 			if(Number(cache.get('lastchanged'))>=Number(currenttime-(i*config.config.segment))){
 				res_body += '#EXTINF:'+config.config.segment+',\r\n';
-				res_body += config.config.preamble + cache.get('prevasset') +'_'+cache.get('prevleft')+ '_'+cache.get('prevright')+'-'+ zeroPad(seg,config.config.segment_digits) +'.ts\r\n';
+				res_body += config.config.preamble + cache.get('prevasset') +'_'+cache.get('prevleft')+ '_'+cache.get('prevright')+'-'+ zeroPad(prevseg,config.config.segment_digits) +'.ts\r\n';
 				changed=true;		
 			}else{
 				if(changed || (i === (config.config.index-1))){
