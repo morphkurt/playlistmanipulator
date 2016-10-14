@@ -29,6 +29,14 @@
       {
         "name": "afl-gf-overlay",
         "segments": "119"
+      },
+      {
+        "name": "furious7-nooverlay",
+        "segments": "84"
+      },
+      {
+        "name": "furious7-overlay",
+        "segments": "84"
       }
 
     ],
