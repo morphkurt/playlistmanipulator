@@ -123,6 +123,13 @@ app.get('/out/getconfig', function (req, res) {
  
 });
 
+app.get('/out/config.json', function (req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.set('Content-Type', 'application/json');
+  res.send(JSON.stringify(config));
+});
+
 function zeroPad(num, places) {
   var zero = places - num.toString().length + 1;
   return Array(+(zero > 0 && zero)).join("0") + num;
