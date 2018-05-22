@@ -29,6 +29,10 @@
     ],
     "asset": [
       {
+        "name" : "afl-gf-overlay",
+        "segments":"30"
+      },
+      {
         "name": "afl",
         "segments": "30"
       },
