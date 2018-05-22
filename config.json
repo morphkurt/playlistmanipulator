@@ -3,40 +3,42 @@
   "config": {
     "bitrate": [
       {
-        "rate": "720"
+        "rate": "600"
       },
       {
-        "rate": "1200"
+        "rate": "800"
       },
       {
-        "rate": "2000"
+        "rate": "1000"
       },
       {
-        "rate": "3300"
+        "rate": "1500"
+      },
+      {
+        "rate": "1800"
+      },
+      {
+        "rate": "2400"
+      },
+      {
+        "rate": "3400"
       },
       {
         "rate": "5500"
-      },
-      {
-        "rate": "9000"
       }
     ],
     "asset": [
       {
-        "name": "afl-gf-nooverlay",
-        "segments": "119"
+        "name": "afl",
+        "segments": "30"
       },
       {
-        "name": "afl-gf-overlay",
-        "segments": "119"
+        "name": "startrek",
+        "segments": "30"
       },
       {
-        "name": "furious7-nooverlay",
-        "segments": "84"
-      },
-      {
-        "name": "furious7-overlay",
-        "segments": "84"
+        "name": "skynews",
+        "segments": "30"
       }
 
     ],
