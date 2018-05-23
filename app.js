@@ -19,8 +19,11 @@ cache.put('prevasset','afl-gf-overlay');
 cache.put('lastchanged','0');
 
 app.get('/out/u/playlist.m3u8', function (req, res) {
+  
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Cache-Control", "max-age=2");
+	
   var assetArray = config.config.asset.filter(function(item) { return item.name == cache.get('asset'); });
   var prevassetArray = config.config.asset.filter(function(item) { return item.name == cache.get('prevasset'); });
   var starttime=cache.get('starttime');
@@ -114,6 +117,7 @@ app.get('/set', function (req, res) {
 app.get('/out/getconfig', function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Cache-Control", "max-age=60");
   res.set('Content-Type', 'application/json');
   var hash = {};
   hash['left']=cache.get('left');
@@ -126,6 +130,7 @@ app.get('/out/getconfig', function (req, res) {
 app.get('/out/config.json', function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Cache-Control", "max-age=60");
   res.set('Content-Type', 'application/json');
   res.send(JSON.stringify(config));
 });
