@@ -23,6 +23,7 @@ app.get('/out/u/playlist.m3u8', function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.header("Cache-Control", "max-age=2");
+  res.header("Content-Type","application/x-mpegURL");
 	
   var assetArray = config.config.asset.filter(function(item) { return item.name == cache.get('asset'); });
   var prevassetArray = config.config.asset.filter(function(item) { return item.name == cache.get('prevasset'); });
