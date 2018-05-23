@@ -2,6 +2,6 @@
 
 ## Create the disk space
 
-mkdir /disk1
+`mkdir /disk1`
 
 ## Build App Docker Image
